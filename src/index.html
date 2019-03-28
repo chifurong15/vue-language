@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="f">
+  <div>
+    <span v-html="common.title"></span>
+    <span v-html="common.ccc"></span>
+    <button @click="language('cn')">中文</button>
+    <button @click="language('es')">English</button>
+  </div>
+</div>
+</body>
+<script src="js/common/js/vue.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script>
+    // var language_type=0;
+    var vm = new Vue({
+        el: '#f',
+        data: {
+            chinese:{
+            },
+            english:{
+            },
+            common:{
+            },
+        },
+        //注释   语言类型 0 中文  1 英文  2繁体中文
+        created: function () {
+            //为了在内部函数能使用外部函数的this对象，要给它赋值了一个名叫self的变量。
+            var self = this;
+            //发送get请求
+            this.$http.get('language/language.json').then(function(res){
+                self.chinese=res.body.chinese;
+                self.english=res.body.english;
+                self.common=res.body.chinese;
+                if(localStorage.getItem('c_language')){
+                    this.language(localStorage.getItem('c_language'))
+                }
+                else {
+                    this.language('cn');
+                }
+            },function(){
+                console.log('请求失败处理');
+            });
+        },
+        methods: {
+            language(type) {
+                switch (type) {
+                    case 'es':
+                        this.common=this.english;
+                        localStorage.setItem('c_language','es');
+                        console.log('지부영');
+                        break;
+                    case 'cn':
+                        this.common=this.chinese;
+                        localStorage.setItem('c_language','cn');
+                        console.log('지부영');
+                        break;
+                }
+            },
+        }
+    })
+</script>
+</html>
